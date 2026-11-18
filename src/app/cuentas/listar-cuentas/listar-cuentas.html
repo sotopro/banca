@@ -1,0 +1,20 @@
+<h1>Mis Cuentas</h1>
+
+@if (cargando()) {
+    <p>Cargando...</p>
+} @else if (error()) {
+    <p class="error">{{ error() }}</p>
+} @else {
+    <ul>
+        @for (cuenta of cuentas(); track cuenta.id) {
+            <li>
+                <a [routerLink]="['/cuentas', cuenta.id]">
+                    {{ cuenta.tipo }} - {{ cuenta.numero }} - {{ cuenta.saldo | currency: 'PEN' }}
+                </a>
+            </li>
+        } @empty {
+            <li>No tienes cuentas.</li>
+        }
+    </ul>
+    <p class="total">Total: {{ total() | currency: 'PEN' }}</p>
+}

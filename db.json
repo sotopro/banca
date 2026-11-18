@@ -1,0 +1,23 @@
+{
+    "cuentas": [
+        {
+            "id": "1",
+            "numero": "191123456578901",
+            "tipo": "Ahorro",
+            "saldo": 2500.50
+        },
+        {
+            "id": "2",
+            "numero": "191123456578902",
+            "tipo": "Corriente",
+            "saldo": 5000.00
+        },
+        {
+            "id": "3",
+            "numero": "191123456578903",
+            "tipo": "CTS",
+            "saldo": 1000.00
+        }
+    ],
+    "transferencias": []
+}
