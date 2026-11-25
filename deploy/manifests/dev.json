@@ -1,0 +1,4 @@
+{
+  "mfe-cuentas": "https://dev.banca.example.com/mfe/cuentas/remoteEntry.json",
+  "mfe-transferencias": "https://dev.banca.example.com/mfe/transferencias/remoteEntry.json"
+}

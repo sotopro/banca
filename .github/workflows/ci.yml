@@ -1,0 +1,64 @@
+# Compila una vez por commit y promueve el mismo artefacto: dev → qas → prod.
+# En GitHub (Settings → Environments) crea "dev", "qas" y "prod" y exige
+# aprobación en qas y prod; los jobs de despliegue esperan esa aprobación.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pruebas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+  build:
+    needs: pruebas
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app: [banca, mfe-cuentas, mfe-transferencias]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx ng build ${{ matrix.app }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.app }}-${{ github.sha }}
+          path: dist/${{ matrix.app }}/browser
+          if-no-files-found: error
+
+  dev:
+    if: github.event_name == 'push'
+    needs: build
+    uses: ./.github/workflows/desplegar.yml
+    with:
+      entorno: dev
+
+  qas:
+    needs: dev
+    uses: ./.github/workflows/desplegar.yml
+    with:
+      entorno: qas
+
+  prod:
+    needs: qas
+    uses: ./.github/workflows/desplegar.yml
+    with:
+      entorno: prod

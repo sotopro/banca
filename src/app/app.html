@@ -1,1 +1,13 @@
-<router-outlet />
+<header class="barra">
+  <span class="marca">Banca Digital</span>
+  @if (sesion.token()) {
+    <nav aria-label="Principal">
+      <a routerLink="/cuentas" routerLinkActive="activo">Cuentas</a>
+      <a routerLink="/transferencias" routerLinkActive="activo">Transferencias</a>
+    </nav>
+    <button type="button" class="salir" (click)="cerrarSesion()">Cerrar sesión</button>
+  }
+</header>
+<main class="contenido">
+  <router-outlet />
+</main>

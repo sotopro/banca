@@ -1,0 +1,18 @@
+.datos {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 1rem;
+}
+dt {
+  color: #566a73;
+}
+dd {
+  margin: 0;
+}
+.saldo {
+  font-weight: 600;
+}
+.accion {
+  display: inline-block;
+  margin-top: 1rem;
+}

@@ -1,0 +1,4 @@
+{
+  "mfe-cuentas": "https://qas.banca.example.com/mfe/cuentas/remoteEntry.json",
+  "mfe-transferencias": "https://qas.banca.example.com/mfe/transferencias/remoteEntry.json"
+}

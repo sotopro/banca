@@ -1,1 +1,18 @@
-/* You can add global styles to this file, and also import other style files */
+/* Estilos globales del shell. En modo federado también aplican a los remotos. */
+body {
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    sans-serif;
+  color: #1d2b33;
+}
+button {
+  font: inherit;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+}
+.error {
+  color: #b00020;
+}

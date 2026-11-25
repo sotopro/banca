@@ -1,0 +1,5 @@
+{
+  "entorno": "prod",
+  "apiUrl": "/api",
+  "logLevel": "error"
+}

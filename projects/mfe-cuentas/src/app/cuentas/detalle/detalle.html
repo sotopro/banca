@@ -1,0 +1,21 @@
+<a routerLink="/cuentas">← Mis cuentas</a>
+
+@if (cuenta.isLoading()) {
+  <p>Cargando...</p>
+} @else if (cuenta.error()) {
+  <p class="error" role="alert">
+    No encontramos esta cuenta. Vuelve al listado e inténtalo de nuevo.
+  </p>
+} @else if (cuenta.value(); as c) {
+  <h1>Cuenta {{ c.tipo }}</h1>
+  <dl class="datos">
+    <dt>Número</dt>
+    <dd>{{ c.numero }}</dd>
+    <dt>Saldo disponible</dt>
+    <dd class="saldo">{{ c.saldo | currency: 'PEN' }}</dd>
+  </dl>
+  <!-- Navegación por URL hacia el otro remoto: no hay dependencia de código entre MFE. -->
+  <a class="accion" [routerLink]="['/transferencias']" [queryParams]="{ origen: c.id }">
+    Transferir desde esta cuenta
+  </a>
+}

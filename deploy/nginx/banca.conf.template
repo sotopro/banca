@@ -1,0 +1,43 @@
+# Plantilla para la imagen oficial de nginx (se procesa con envsubst desde
+# /etc/nginx/templates). Variables por entorno:
+#   API_UPSTREAM  URL del backend de ese entorno, p. ej. http://api-qas.interno:8080/
+#
+# Estructura publicada en root:
+#   /                       ← dist/banca/browser (ya preparado con preparar-despliegue)
+#   /mfe/cuentas/           ← dist/mfe-cuentas/browser
+#   /mfe/transferencias/    ← dist/mfe-transferencias/browser
+server {
+  listen 80;
+  server_name _;
+  root /usr/share/nginx/html;
+
+  # Cambian por entorno o por release: nunca se cachean.
+  location ~ ^/(federation\.manifest\.json|env\.config\.json|index\.html)$ {
+    include /etc/nginx/conf.d/seguridad.conf;
+    add_header Cache-Control "no-cache" always;
+  }
+  location ~ /remoteEntry\.json$ {
+    include /etc/nginx/conf.d/seguridad.conf;
+    add_header Cache-Control "no-cache" always;
+  }
+
+  # Archivos con hash en el nombre: inmutables.
+  location ~* \.(?:js|css|woff2?|ico|svg|png)$ {
+    include /etc/nginx/conf.d/seguridad.conf;
+    add_header Cache-Control "public, max-age=31536000, immutable" always;
+    try_files $uri =404;
+  }
+
+  location /api/ {
+    proxy_pass ${API_UPSTREAM};
+    proxy_set_header Host $host;
+    proxy_set_header Authorization $http_authorization;
+  }
+
+  # Rutas del shell (SPA).
+  location / {
+    include /etc/nginx/conf.d/seguridad.conf;
+    add_header Cache-Control "no-cache" always;
+    try_files $uri $uri/ /index.html;
+  }
+}
