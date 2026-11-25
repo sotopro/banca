@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Sesion } from '../sesion';
+import { Sesion } from '@banca/core';
 import { Router } from '@angular/router';
 
 @Component({

@@ -1,0 +1,47 @@
+# Prepara los artefactos de un commit para un entorno: copia el manifiesto y
+# env.config.json del entorno en el shell (en prod con hashes SRI) y publica
+# un artefacto banca-<entorno> listo para subir al hosting.
+name: Desplegar
+
+on:
+  workflow_call:
+    inputs:
+      entorno:
+        required: true
+        type: string
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.entorno }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/download-artifact@v4
+        with:
+          name: banca-${{ github.sha }}
+          path: dist/banca/browser
+      - uses: actions/download-artifact@v4
+        with:
+          name: mfe-cuentas-${{ github.sha }}
+          path: dist/mfe-cuentas/browser
+      - uses: actions/download-artifact@v4
+        with:
+          name: mfe-transferencias-${{ github.sha }}
+          path: dist/mfe-transferencias/browser
+      - run: node scripts/preparar-despliegue.mjs ${{ inputs.entorno }}
+      - name: Armar sitio (shell en /, remotos en /mfe/*)
+        run: |
+          mkdir -p sitio/mfe
+          cp -R dist/banca/browser/. sitio/
+          cp -R dist/mfe-cuentas/browser sitio/mfe/cuentas
+          cp -R dist/mfe-transferencias/browser sitio/mfe/transferencias
+      - uses: actions/upload-artifact@v4
+        with:
+          name: banca-${{ inputs.entorno }}-${{ github.sha }}
+          path: sitio
+          if-no-files-found: error
+      # Publicación: agrega aquí el paso de tu hosting (bucket, servidor nginx, CDN)
+      # usando el directorio "sitio" y deploy/nginx/banca.conf.template.

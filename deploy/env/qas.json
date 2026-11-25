@@ -1,0 +1,5 @@
+{
+  "entorno": "qas",
+  "apiUrl": "/api",
+  "logLevel": "warn"
+}

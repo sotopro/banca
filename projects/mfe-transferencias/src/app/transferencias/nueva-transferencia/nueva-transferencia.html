@@ -1,0 +1,66 @@
+<h1>Nueva transferencia</h1>
+
+@if (cargando()) {
+  <p>Cargando cuentas...</p>
+} @else if (errorCarga()) {
+  <p class="error" role="alert">{{ errorCarga() }}</p>
+} @else if (registrada(); as t) {
+  <section class="confirmacion" role="status">
+    <h2>Transferencia registrada</h2>
+    <p>
+      Enviaste {{ t.monto | currency: 'PEN' }} a la cuenta {{ t.destino }}. Código de operación:
+      <strong>{{ t.id }}</strong>
+    </p>
+    <div class="acciones">
+      <button type="button" (click)="nuevaTransferencia()">Hacer otra transferencia</button>
+      <a routerLink="/cuentas">Ver mis cuentas</a>
+    </div>
+  </section>
+} @else {
+  <form [formGroup]="formulario" (ngSubmit)="enviar()" novalidate>
+    <label for="origenId">Cuenta de origen</label>
+    <select id="origenId" formControlName="origenId">
+      <option value="" disabled>Elige una cuenta</option>
+      @for (cuenta of cuentas(); track cuenta.id) {
+        <option [value]="cuenta.id">
+          {{ cuenta.tipo }} {{ cuenta.numero }} · {{ cuenta.saldo | currency: 'PEN' }}
+        </option>
+      }
+    </select>
+    @if (
+      formulario.controls.origenId.touched && formulario.controls.origenId.hasError('required')
+    ) {
+      <p class="error">Elige la cuenta de origen.</p>
+    }
+
+    <label for="destino">Cuenta de destino o CCI</label>
+    <input id="destino" formControlName="destino" inputmode="numeric" autocomplete="off" />
+    @if (formulario.controls.destino.touched && formulario.controls.destino.invalid) {
+      <p class="error">Ingresa un número de cuenta (13 a 15 dígitos) o un CCI (20 dígitos).</p>
+    }
+    @if (formulario.hasError('mismaCuenta')) {
+      <p class="error">La cuenta de destino no puede ser la misma que la de origen.</p>
+    }
+
+    <label for="monto">Monto (S/)</label>
+    <input id="monto" type="number" min="0.01" step="0.01" formControlName="monto" />
+    @if (formulario.controls.monto.touched && formulario.controls.monto.invalid) {
+      <p class="error">Ingresa un monto mayor a S/ 0.00.</p>
+    }
+    @if (formulario.hasError('saldoInsuficiente')) {
+      <p class="error">
+        El monto supera el saldo disponible ({{
+          saldoDe(formulario.controls.origenId.value) | currency: 'PEN'
+        }}).
+      </p>
+    }
+
+    @if (errorEnvio()) {
+      <p class="error" role="alert">{{ errorEnvio() }}</p>
+    }
+
+    <button type="submit" [disabled]="enviando()">
+      {{ enviando() ? 'Enviando...' : 'Transferir' }}
+    </button>
+  </form>
+}

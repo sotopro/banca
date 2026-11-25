@@ -1,0 +1,6 @@
+{
+  "name": "@banca/core",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sesión, autenticación, entorno y modelos compartidos por el shell y los micro frontends de Banca."
+}

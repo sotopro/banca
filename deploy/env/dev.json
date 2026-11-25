@@ -1,0 +1,5 @@
+{
+  "entorno": "dev",
+  "apiUrl": "/api",
+  "logLevel": "debug"
+}
